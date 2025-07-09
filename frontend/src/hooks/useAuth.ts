@@ -1,47 +1,49 @@
-import axios from 'axios';
 import { useApp } from '../contexts/AppContext';
-
-const API_URL = 'http://localhost:8080/api/auth';
 
 export function useAuth() {
   const { state, dispatch } = useApp();
 
   const login = async (email: string, password: string) => {
     dispatch({ type: 'SET_LOADING', payload: true });
-
-    try {
-      const response = await axios.post(`${API_URL}/login`, { email, password });
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      dispatch({ type: 'SET_USER', payload: user });
-      return user;
-    } catch (error) {
-      console.error('Error al iniciar sesión:', error);
-      throw error;
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
-    }
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const mockUser = {
+      id: '1',
+      name: 'John Doe',
+      email,
+      avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
+      isHost: true,
+    };
+    
+    dispatch({ type: 'SET_USER', payload: mockUser });
+    dispatch({ type: 'SET_LOADING', payload: false });
+    
+    return mockUser;
   };
 
   const register = async (name: string, email: string, password: string) => {
     dispatch({ type: 'SET_LOADING', payload: true });
-
-    try {
-      const response = await axios.post(`${API_URL}/register`, { name, email, password });
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      dispatch({ type: 'SET_USER', payload: user });
-      return user;
-    } catch (error) {
-      console.error('Error al registrarse:', error);
-      throw error;
-    } finally {
-      dispatch({ type: 'SET_LOADING', payload: false });
-    }
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    const mockUser = {
+      id: '2',
+      name,
+      email,
+      avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
+      isHost: false,
+    };
+    
+    dispatch({ type: 'SET_USER', payload: mockUser });
+    dispatch({ type: 'SET_LOADING', payload: false });
+    
+    return mockUser;
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
     dispatch({ type: 'SET_USER', payload: null });
   };
 
