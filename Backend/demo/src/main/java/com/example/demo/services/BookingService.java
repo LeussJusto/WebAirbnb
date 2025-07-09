@@ -8,6 +8,7 @@ import com.example.demo.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -69,5 +70,56 @@ public class BookingService {
         if (checkOut.isBefore(today)) return BookingStatus.PASADA;
         if (checkIn.isAfter(today)) return BookingStatus.PROXIMA;
         return BookingStatus.PROXIMA;
+    }
+    public BookingResponse getBookingByIdAndUser(Long bookingId, String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+        if (!booking.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("No autorizado para ver esta reserva");
+        }
+
+        return convertToResponse(booking);
+    }
+
+    @Transactional
+    public BookingResponse updateBooking(Long bookingId, BookingRequest request, String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+        if (!booking.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("No autorizado para modificar esta reserva");
+        }
+
+        booking.setCheckIn(request.getCheckIn());
+        booking.setCheckOut(request.getCheckOut());
+        // Actualiza el estado según nuevas fechas
+        booking.setStatus(determineStatus(request.getCheckIn(), request.getCheckOut()));
+
+        bookingRepository.save(booking);
+        return convertToResponse(booking);
+    }
+
+    @Transactional
+    public void cancelBooking(Long bookingId, String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+        if (!booking.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("No autorizado para cancelar esta reserva");
+        }
+
+        // Marcar como cancelada (debes tener este estado en tu enum BookingStatus)
+        booking.setStatus(BookingStatus.CANCELADA);
+        bookingRepository.save(booking);
     }
 }

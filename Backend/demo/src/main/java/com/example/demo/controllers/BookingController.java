@@ -32,4 +32,26 @@ public class BookingController {
         String email = authentication.getName();
         return ResponseEntity.ok(bookingService.getBookingsByUser(email));
     }
+   @GetMapping("/{id}")
+    public ResponseEntity<BookingResponse> getBookingDetails(@PathVariable Long id, Authentication authentication) {
+        String email = authentication.getName();
+        return ResponseEntity.ok(bookingService.getBookingByIdAndUser(id, email));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BookingResponse> updateBooking(
+            @PathVariable Long id,
+            @Valid @RequestBody BookingRequest request,
+            Authentication authentication) {
+        String email = authentication.getName();
+        return ResponseEntity.ok(bookingService.updateBooking(id, request, email));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> cancelBooking(@PathVariable Long id, Authentication authentication) {
+        String email = authentication.getName();
+        bookingService.cancelBooking(id, email);
+        return ResponseEntity.noContent().build();
+    }
+
 }

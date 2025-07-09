@@ -21,4 +21,6 @@ public class Favorite {
     @ManyToOne(optional = false)
     @JoinColumn(name = "accommodation_id")
     private Accommodation accommodation;
+
+    
 }

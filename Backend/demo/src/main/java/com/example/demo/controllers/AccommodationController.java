@@ -22,6 +22,18 @@ public class AccommodationController {
         return ResponseEntity.ok(accommodationService.getFeaturedAccommodations());
     }
 
+    @PutMapping("/{id}/featured")
+    public ResponseEntity<Void> setFeatured(
+            @PathVariable Long id,
+            @RequestParam boolean featured,
+            Authentication authentication) {
+        String hostEmail = authentication.getName();
+        // Si quieres, verifica que el host sea el mismo o tenga permisos antes
+        accommodationService.setFeatured(id, featured);
+        return ResponseEntity.noContent().build();
+    }
+
+
     @GetMapping("/search")
     public ResponseEntity<List<AccommodationCardDto>> searchAccommodations(
             @RequestParam(required = false) String location,
@@ -44,6 +56,51 @@ public class AccommodationController {
             Authentication authentication) {   // Aquí recibes el usuario autenticado
         String hostEmail = authentication.getName();  // Obtienes el email del usuario logueado
         return ResponseEntity.ok(accommodationService.createAccommodation(request, hostEmail));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AccommodationDetailDto> updateAccommodation(
+            @PathVariable Long id,
+            @Valid @RequestBody AccommodationRequest request,
+            Authentication authentication) {
+
+        String hostEmail = authentication.getName();
+        return ResponseEntity.ok(accommodationService.updateAccommodation(id, request, hostEmail));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAccommodation(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        String hostEmail = authentication.getName();
+        accommodationService.deleteAccommodation(id, hostEmail);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/activate")
+    public ResponseEntity<Void> activateAccommodation(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        String hostEmail = authentication.getName();
+        accommodationService.activateAccommodation(id, hostEmail);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/featured/rating")
+    public ResponseEntity<List<AccommodationCardDto>> getFeaturedByRating(
+            @RequestParam double minRating,
+            @RequestParam int minReviews) {
+        List<AccommodationCardDto> featured = accommodationService.getFeaturedByRating(minRating, minReviews);
+        return ResponseEntity.ok(featured);
+    }
+
+
+    @PostMapping("/{id}/review")
+    public ResponseEntity<Void> addReview(@PathVariable Long id, @RequestParam double rating) {
+        accommodationService.addReview(id, rating);
+        return ResponseEntity.ok().build();
     }
 
 }
