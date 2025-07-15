@@ -20,6 +20,7 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final AccommodationRepository accommodationRepository;
     private final UserRepository userRepository;
+    private final TripPlanRepository tripPlanRepository;
 
     public BookingResponse createBooking(BookingRequest request, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
@@ -33,13 +34,23 @@ public class BookingService {
         booking.setAccommodation(accommodation);
         booking.setCheckIn(request.getCheckIn());
         booking.setCheckOut(request.getCheckOut());
-
-        // Lógica para determinar el estado
         booking.setStatus(determineStatus(request.getCheckIn(), request.getCheckOut()));
 
-        Booking saved = bookingRepository.save(booking);
-        return convertToResponse(saved);
+        if (request.getTripPlanId() != null) {
+            TripPlan tripPlan = tripPlanRepository.findById(request.getTripPlanId())
+                    .orElseThrow(() -> new ResourceNotFoundException("TripPlan not found"));
+
+            // ✅ Aquí haces la validación de seguridad:
+            if (!tripPlan.getUser().getId().equals(user.getId())) {
+                throw new RuntimeException("No autorizado para usar este TripPlan");
+            }
+
+            booking.setTripPlan(tripPlan);
+        }
+
+        return convertToResponse(bookingRepository.save(booking));
     }
+
 
     public List<BookingResponse> getBookingsByUser(String email) {
         User user = userRepository.findByEmail(email)
@@ -60,6 +71,14 @@ public class BookingService {
         dto.setCheckIn(booking.getCheckIn());
         dto.setCheckOut(booking.getCheckOut());
         dto.setStatus(booking.getStatus().name());
+        dto.setHostName(booking.getAccommodation().getHost().getName());
+        dto.setHostEmail(booking.getAccommodation().getHost().getEmail());
+        dto.setHostPhone(booking.getAccommodation().getHost().getPhone());
+
+
+         if (booking.getTripPlan() != null) {
+        dto.setTripPlanId(booking.getTripPlan().getId());
+    }
         return dto;
     }
 

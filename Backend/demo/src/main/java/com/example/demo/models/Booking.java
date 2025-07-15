@@ -26,5 +26,10 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "accommodation_id")
     private Accommodation accommodation; // Lo que reserva
+    
+    @ManyToOne
+    @JoinColumn(name = "trip_plan_id")
+    private TripPlan tripPlan;
+
 }
 

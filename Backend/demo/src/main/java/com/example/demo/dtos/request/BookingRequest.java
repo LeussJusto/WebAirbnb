@@ -9,4 +9,6 @@ public class BookingRequest {
     private Long accommodationId;
     private LocalDate checkIn;
     private LocalDate checkOut;
+    private Long tripPlanId;
+
 }

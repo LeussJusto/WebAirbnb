@@ -11,4 +11,9 @@ public class BookingResponse {
     private LocalDate checkIn;
     private LocalDate checkOut;
     private String status;
+    private Long tripPlanId;
+    private String hostName;
+    private String hostEmail;
+    private String hostPhone;
+
 }
