@@ -1,0 +1,27 @@
+spring:
+  profiles:
+    active: dev-docker  # Perfil por defecto
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB  
+
+jwt:
+  secret: "p3QH9pA1q7V5nKjklQvCzSlxM8c9VxkW4TtyA4c6ZqDkF1Dq3W+Y8sYk1VY="
+  expiration: 86400000  # 1 día en ms
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type: TRACE
+      springframework:
+        security: DEBUG
+        web: INFO
+        data: INFO
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api

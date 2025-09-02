@@ -1,0 +1,14 @@
+# application-template.yml (solo referencia)
+spring:
+  datasource:
+    url: jdbc:mysql://NOMBRE_SERVICIO_DB:3306/NOMBRE_BASE_DE_DATOS?useSSL=false&serverTimezone=UTC
+    username: USUARIO_MYSQL
+    password: CONTRASEÑA_MYSQL
+
+# Variables de entorno producción ejemplo
+DB_HOST: localhost
+DB_PORT: 3306
+DB_NAME: nombre_bd_produccion
+DB_USER: usuario_produccion
+DB_PASSWORD: contraseña_segura_produccion
+DB_SSL: true
