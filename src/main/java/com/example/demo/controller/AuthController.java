@@ -7,15 +7,11 @@ import com.example.demo.security.*;
 import com.example.demo.config.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-
-import java.util.HashMap;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -28,12 +24,14 @@ public class AuthController {
     private final JwtUtils jwtUtils;
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("error", "El email ya está registrado");
-            errorResponse.put("success", false);
-            return ResponseEntity.badRequest().body(errorResponse);
+            return ResponseEntity.badRequest().body(
+                    RegisterResponse.builder()
+                            .message("El email ya está registrado")
+                            .success(false)
+                            .build()
+            );
         }
 
         User user = User.builder()
@@ -48,20 +46,22 @@ public class AuthController {
         UserDetailsImpl userDetails = UserDetailsImpl.build(user);
         String token = jwtUtils.generateJwtToken(userDetails);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Usuario registrado correctamente");
-        response.put("userId", user.getId());
-        response.put("email", user.getEmail());
-        response.put("name", user.getName());
-        response.put("role", user.getRole());
-        response.put("token", token);
-        response.put("success", true);
+        RegisterResponse response = RegisterResponse.builder()
+                .message("Usuario registrado correctamente")
+                .userId(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .role(user.getRole().name())
+                .token(token)
+                .success(true)
+                .build();
 
         return ResponseEntity.ok(response);
     }
 
+
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
@@ -69,6 +69,17 @@ public class AuthController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         String token = jwtUtils.generateJwtToken(userDetails);
 
-        return new LoginResponse(token);
+        LoginResponse response = new LoginResponse(
+                "Login exitoso",
+                token,
+                userDetails.getId(),
+                userDetails.getEmail(),
+                userDetails.getName(),
+                userDetails.getRole().name(),
+                true
+        );
+
+        return ResponseEntity.ok(response);
     }
+
 }

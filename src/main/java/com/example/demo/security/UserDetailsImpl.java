@@ -14,6 +14,7 @@ import java.util.List;
 public class UserDetailsImpl implements UserDetails {
 
     private Long id;
+    private String name;
     private String email;
     private String password;
     private RoleEnum role;
@@ -39,6 +40,6 @@ public class UserDetailsImpl implements UserDetails {
     public boolean isEnabled() { return true; }
 
     public static UserDetailsImpl build(User user) {
-        return new UserDetailsImpl(user.getId(), user.getEmail(), user.getPassword(), user.getRole());
+        return new UserDetailsImpl(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole());
     }
 }
