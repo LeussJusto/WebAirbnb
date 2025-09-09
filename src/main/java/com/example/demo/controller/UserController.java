@@ -38,7 +38,8 @@ public class UserController {
         return userRepository.findById(id).map(user -> {
             user.setName(userDetails.getName());
             user.setEmail(userDetails.getEmail());
-            user.setPassword(userDetails.getPassword()); // ⚠️ Mejor encriptar antes de guardar
+            user.setPassword(userDetails.getPassword());
+            user.setRole(userDetails.getRole());
             return ResponseEntity.ok(userRepository.save(user));
         }).orElse(ResponseEntity.notFound().build());
     }
