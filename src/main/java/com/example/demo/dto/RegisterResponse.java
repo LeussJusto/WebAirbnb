@@ -14,7 +14,7 @@ public class RegisterResponse {
     private Long userId;
     private String email;
     private String name;
-    private String role;
+    private java.util.Set<String> roles;
     private String token;
     private boolean success;
 }

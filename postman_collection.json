@@ -1,0 +1,191 @@
+{
+  "info": {
+    "name": "WEBAIRBNBMEJORADO - API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colección básica con endpoints principales: auth, properties, reservations, favorites, reviews, payments, notifications, blocked-dates"
+  },
+  "item": [
+    {
+      "name": "Register",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Tu Nombre\",\n  \"email\": \"tucorreo@example.com\",\n  \"password\": \"tuPassword123\",\n  \"roles\": [\"HOST\", \"USER\"]\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/register",
+          "host": ["{{base_url}}"],
+          "path": ["auth","register"]
+        }
+      }
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"tucorreo@example.com\",\n  \"password\": \"tuPassword123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/login",
+          "host": ["{{base_url}}"],
+          "path": ["auth","login"]
+        }
+      }
+    },
+    {
+      "name": "Create Property (requires Bearer {{token}} and role HOST)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Hermoso departamento\",\n  \"description\": \"Departamento amplio en zona céntrica\",\n  \"address\": \"Av. Principal 123, Ciudad\",\n  \"pricePerNight\": 85.50\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/properties",
+          "host": ["{{base_url}}"],
+          "path": ["properties"]
+        }
+      }
+    },
+    {
+      "name": "Get All Properties",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/properties",
+          "host": ["{{base_url}}"],
+          "path": ["properties"]
+        }
+      }
+    },
+    {
+      "name": "Get Property by ID",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/properties/:id",
+          "host": ["{{base_url}}"],
+          "path": ["properties", ":id"]
+        }
+      }
+    },
+    {
+      "name": "Create Reservation (requires auth)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"propertyId\": 1,\n  \"startDate\": \"2025-11-10\",\n  \"endDate\": \"2025-11-15\",\n  \"guests\": 2\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/reservations",
+          "host": ["{{base_url}}"],
+          "path": ["reservations"]
+        }
+      }
+    },
+    {
+      "name": "Add Favorite (requires auth)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/favorites?propertyId=1",
+          "host": ["{{base_url}}"],
+          "path": ["api","favorites"],
+          "query": [ { "key": "propertyId", "value": "1" } ]
+        }
+      }
+    },
+    {
+      "name": "Create Review",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/reviews?propertyId=1&rating=5&comment=Excelente",
+          "host": ["{{base_url}}"],
+          "path": ["api","reviews"],
+          "query": [
+            { "key": "propertyId", "value": "1" },
+            { "key": "rating", "value": "5" },
+            { "key": "comment", "value": "Excelente" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Simulate Payment",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/payments?reservationId=1&method=card",
+          "host": ["{{base_url}}"],
+          "path": ["api","payments"],
+          "query": [
+            { "key": "reservationId", "value": "1" },
+            { "key": "method", "value": "card" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get User Notifications",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/notifications/user/:userId",
+          "host": ["{{base_url}}"],
+          "path": ["api","notifications","user",":userId"]
+        }
+      }
+    },
+    {
+      "name": "Blocked Dates - Add",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/blocked-dates?propertyId=1&start=2025-12-01&end=2025-12-10",
+          "host": ["{{base_url}}"],
+          "path": ["api","blocked-dates"],
+          "query": [
+            { "key": "propertyId", "value": "1" },
+            { "key": "start", "value": "2025-12-01" },
+            { "key": "end", "value": "2025-12-10" }
+          ]
+        }
+      }
+    }
+  ]
+}

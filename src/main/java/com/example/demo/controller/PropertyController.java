@@ -19,7 +19,6 @@ public class PropertyController {
     
     private final PropertyService propertyService;
 
-    // ✅ CREAR PROPIEDAD (Solo usuarios autenticados con rol HOST)
     @PostMapping
     @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> createProperty(@Valid @RequestBody PropertyDTO propertyDTO) {
@@ -34,14 +33,12 @@ public class PropertyController {
         }
     }
 
-    // ✅ OBTENER TODAS LAS PROPIEDADES (Público - cualquiera puede ver)
     @GetMapping
     public ResponseEntity<List<Property>> getAllProperties() {
         List<Property> properties = propertyService.getAllProperties();
         return ResponseEntity.ok(properties);
     }
 
-    // ✅ OBTENER UNA PROPIEDAD POR ID (Público)
     @GetMapping("/{id}")
     public ResponseEntity<?> getPropertyById(@PathVariable Long id) {
         try {
@@ -55,7 +52,6 @@ public class PropertyController {
         }
     }
 
-    // ✅ OBTENER PROPIEDAD CON DETALLES (Público)
     @GetMapping("/{id}/details")
     public ResponseEntity<?> getPropertyWithDetails(@PathVariable Long id) {
         try {
@@ -69,7 +65,6 @@ public class PropertyController {
         }
     }
 
-    // ✅ ACTUALIZAR PROPIEDAD (Solo el propietario puede actualizar)
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> updateProperty(
@@ -98,7 +93,6 @@ public class PropertyController {
         }
     }
 
-    // ✅ ELIMINAR PROPIEDAD (Solo el propietario puede eliminar)
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> deleteProperty(@PathVariable Long id) {
@@ -125,7 +119,6 @@ public class PropertyController {
         }
     }
 
-    // ✅ OBTENER MIS PROPIEDADES (Solo usuarios autenticados)
     @GetMapping("/my-properties")
     @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<?> getMyProperties() {
@@ -140,22 +133,18 @@ public class PropertyController {
         }
     }
 
-    // ✅ OBTENER PROPIEDADES POR PROPIETARIO (Solo admins o el mismo usuario)
     @GetMapping("/owner/{ownerId}")
     public ResponseEntity<List<Property>> getPropertiesByOwner(@PathVariable Long ownerId) {
         List<Property> properties = propertyService.getPropertiesByOwnerId(ownerId);
         return ResponseEntity.ok(properties);
     }
 
-    // ✅ BÚSQUEDA POR CIUDAD/DIRECCIÓN (Público)
     @GetMapping("/search")
     public ResponseEntity<List<Property>> searchProperties(
             @RequestParam(required = false) String address,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice) {
         
-        // Aquí puedes implementar lógica de búsqueda más compleja
-        // Por ahora devolvemos todas las propiedades
         List<Property> properties = propertyService.getAllProperties();
         return ResponseEntity.ok(properties);
     }

@@ -1,27 +1,32 @@
 package com.example.demo.security;
 
 import com.example.demo.model.User;
+import com.example.demo.model.Role;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
     private Long id;
     private String name;
     private String email;
     private String password;
-    private RoleEnum role;
+    private Set<Role> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -40,6 +45,10 @@ public class UserDetailsImpl implements UserDetails {
     public boolean isEnabled() { return true; }
 
     public static UserDetailsImpl build(User user) {
-        return new UserDetailsImpl(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole());
+        return new UserDetailsImpl(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRoles());
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
     }
 }

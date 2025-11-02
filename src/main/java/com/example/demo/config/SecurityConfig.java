@@ -27,8 +27,11 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/users/**").hasRole("USER")
+                .requestMatchers("/error").permitAll()
+                .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/properties/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/properties/**").hasRole("HOST")
+                .requestMatchers(HttpMethod.POST, "/reservations/**").hasRole("USER")
                 
                 .anyRequest().authenticated()
             )

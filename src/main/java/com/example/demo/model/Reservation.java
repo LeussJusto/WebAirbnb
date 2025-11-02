@@ -2,7 +2,6 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDate;
 
 @Entity
@@ -19,6 +18,9 @@ public class Reservation {
     private LocalDate endDate;
     private double totalPrice;
 
+    @Enumerated(EnumType.STRING)
+    private ReservationStatus status;
+
     @ManyToOne
     @JoinColumn(name = "property_id")
     private Property property;
@@ -28,5 +30,6 @@ public class Reservation {
     private User guest;
 
     @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)
+    @com.fasterxml.jackson.annotation.JsonIgnore 
     private Payment payment;
 }

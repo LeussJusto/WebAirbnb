@@ -7,7 +7,7 @@ import java.util.List;
 
 @Repository
 public interface PropertyRepository extends JpaRepository<Property, Long> {
-    List<Property> findByOwnerId(Long ownerId);
+    List<Property> findByOwnerIdOrderByIdDesc(Long ownerId);
 
     List<Property> findByPricePerNightBetween(double minPrice, double maxPrice);
     List<Property> findByAddressContainingIgnoreCase(String address);
